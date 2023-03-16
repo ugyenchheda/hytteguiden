@@ -1,0 +1,244 @@
+<?php
+/**
+ * The header for our theme
+ *
+ * This is the template that displays all of the <head> section and everything up until <div id="content">
+ *
+ * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package Hytteguiden
+ */
+
+?>
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<?php wp_head(); ?>
+</head>
+
+<?php
+$body_class = '';
+$header_class = '';
+
+if(is_front_page() ){
+	$body_class = 'pageheadoverlay';
+	$header_class = ' headeroverlay';
+	
+} else if ( is_single( 'cabin' )){
+	$header_class = ' headeroverlay';
+}
+else if ( is_single( 'producer' )){
+	$body_class = 'pageheadoverlay';
+	$header_class = ' headeroverlay';
+}
+?>
+
+<body <?php body_class($body_class); ?>>
+	<header class="header <?php echo $header_class; ?>">
+		<div class="container-fluid">
+			<div class="headwrap">
+				<div class="headblock">
+					<span class="navtrigger"><i class="fa fa-bars"></i></span>
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="sitelogo">
+						<?php
+							$transparent_logo = get_theme_mod('transparent_logo',  get_template_directory_uri(). '/images/hytteguiden-logo-white.png');
+							$main_logo = get_theme_mod('main_logo',  get_template_directory_uri(). '/images/hytteguiden-logo-theme.png');
+
+
+							if(is_front_page() && !empty($transparent_logo)){
+								echo '<img src="'.$transparent_logo.'" class="img-fluid logo-white">';
+							}
+							if(!empty($main_logo)){
+								echo '<img src="'.$main_logo.'" class="img-fluid logo-theme">';
+							}
+
+						?>
+
+					</a>
+				</div>
+				<nav class="navigation">
+					<div class="navhead">
+						<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="navlogo">
+							<?php
+
+							if(!empty($main_logo)){
+								echo '<img src="'.$main_logo.'" class="img-fluid logo-theme">';
+							}
+							?>
+						</a>
+						<span class="closenav"><img src="<?php echo get_template_directory_uri(); ?>/images/cancel.svg" alt=""></span>
+					</div>
+
+					<?php
+					$navigation_args =  array(
+											    'theme_location' => 'primary_menu'
+											);
+					 wp_nav_menu($navigation_args); ?>
+				</nav>
+				<div class="usernav">
+					<ul>
+						<li><a href="<?php echo home_url( '/mine-kataloger/' ); ?>"><i class="far fa-file-alt"></i> <span class="navtext">Kataloger</span></a></li>
+						<li><a href="<?php echo home_url( '/mine-hytter/' ); ?>"><i class="far fa-heart"></i> <span class="navtext">Favoritter</span></a></li>
+						<li>
+						<?php
+						
+// Include PHP SDK Client and a config file with credentials
+$spidClientConfig = [
+	VGS_Client::CLIENT_ID          => "5c496e3dfe20a2090b603e99",
+	VGS_Client::CLIENT_SECRET      => "tx2hpRgjMuon3fhfvdj1",
+	VGS_Client::CLIENT_SIGN_SECRET => "Xr7nR2CzgAvmjKNAbJdi",
+	VGS_Client::STAGING_DOMAIN     => "identity-pre.schibsted.com",
+	VGS_Client::HTTPS              => true,
+	VGS_Client::REDIRECT_URI       => "https://hytte.indexportal.no/",
+	VGS_Client::COOKIE             => false,
+	VGS_Client::API_VERSION        => 2,
+	VGS_Client::PRODUCTION         => false
+  ];
+  // overwrite redirect url to be HERE
+  $spidClientConfig[VGS_Client::REDIRECT_URI] = "https://hytte.indexportal.no/spid-bijay";
+  $spidClientConfig[VGS_Client::COOKIE] = true; // disable cookie support for SDK
+  
+  // Instantiate the SDK client
+  $client = new VGS_Client($spidClientConfig);
+  $client->argSeparator = '&';
+  
+  // When a logout redirect comes from SPiD, delete the local session
+  if (isset($_GET['logout'])) {
+	 unset($_SESSION['sdk']);
+  }
+  
+  // Code is part of the redirect back from SPiD, redirect to self to remove it from URL
+  // since it may only be used once, and it has been used to create session
+  if (isset($_GET['code'])) {
+	  // Get/Check if we have local session, creates ones if code GET param comes
+	 // echo 'aa';   
+	  $_SESSION['sdk'] = $client->getSession();
+	  
+	 print_r($_SESSION['sdk']);
+  
+	 echo 'bb';
+	 header( "Location: ". $client->getCurrentURI(array(), array('code','login','logout'))) ;
+	 exit;
+  }
+  
+  
+  
+  // May get credential errors
+  if (isset($_GET['error'])) {
+	  echo '<h3 id="message" style="color:red">'.$_GET['error'].'</h3>';
+  }
+  
+  $session = isset($_SESSION['sdk']) ? $_SESSION['sdk'] : false;
+  
+  // If we have session, that means we are logged in.
+  if ($session) {
+	  // Authorize the client with the session saved user token
+	  $client->setAccessToken($session['access_token']);
+  
+	  // Try since SDK may throw VGS_Client_Exceptions:
+	  //   For instance if the client is blocked, has exceeded ratelimit or lacks access right
+	  try {
+		  // Grab the logged in user's User Object, /me will include the entire User object
+		  $user = $client->api('/me');
+  
+		  echo '<h3 id="message">Welcome</h3>
+			  <h4>Logged in as <span id="name" style="color:blue">'.$user['displayName'].'</span> <small>id: <span id="userId" style="color:green">'.$user['userId'].'</span> email: <span id="email" style="color:purple">'.$user['email'].'</span></h4>';
+  
+		  if (isset($_GET['order_id'])) {
+			  echo '<pre>'.print_r($client->api('/order/'.$_GET['order_id']),true).'</pre>';
+		  }
+  
+	  } catch (VGS_Client_Exception $e) {
+		  if ($e->getCode() == 401) {
+			  // access denied, in case the access token is expired, try to refresh it
+			  try {
+				  // refresh tokens using the session saved refresh token
+				  $client->refreshAccessToken($session['refresh_token']);
+				  $_SESSION['sdk']['access_token'] = $client->getAccessToken();
+				  $_SESSION['sdk']['refresh_token'] = $client->getRefreshToken();
+				  // Sesssion refreshed with valid tokens
+				  header( "Location: ". $client->getCurrentURI(array(), array('code','login','error','logout', 'order_id', 'spid_page'))) ;
+				  exit;
+			  } catch (Exception $e2) {
+				  /* falls back to $e message bellow */
+			  }
+		  }
+		  if ($e->getCode() == 400) {
+			  header( "Location: ". $client->getLoginURI(array('redirect_uri' => $client->getCurrentURI(array(), array('logout','error','code', 'order_id', 'spid_page')))));
+			  exit;
+		  }
+  
+		  // API exception, show message, remove session as it is probably not usable
+		  unset($_SESSION['sdk']);
+		  echo '<h3 id="error" style="color:red">'.$e->getCode().' : '.$e->getMessage().'</h3>';
+	  }
+  
+	  echo '<p><a id="login-link" href="' . $client->getAccountURI(array('redirect_uri' =>
+		  $client->getCurrentURI(array(), array('logout','error','code', 'order_id', 'spid_page'))
+	  )) . '">My Account</a></p>';
+  
+	  // Show a logout link
+	  echo '<p><a id="login-link" href="' . $client->getLogoutURI(array('redirect_uri' =>
+		  $client->getCurrentURI(array('logout' => 1), array('error','code', 'order_id', 'spid_page'))
+	  )) . '">Logout</a></p>';
+  
+  
+	  echo '<p><a id="login-link" href="' . $client->getPurchaseURI(array(
+		  'redirect_uri' => $client->getCurrentURI(array(), array('logout', 'error', 'code', 'order_id', 'spid_page')),
+		  'cancel_redirect_uri' => $client->getCurrentURI(array('cancel'=>1), array('logout', 'error', 'code', 'order_id', 'spid_page')),
+	  )) . '">Buy something</a> (standard checkout flow)</p>';
+  
+  
+	  echo '<p><a id="login-link" href="' . $client->getPurchaseURI(array(
+		  // 'tag' => 'taggen98',
+		  'campaign_id' => 1, // provide a campaign id
+		  // 'product_id' => YYYY,
+		  // 'voucher_code' => ZZZZ,
+		  'redirect_uri' => $client->getCurrentURI(array('cameback'=>2), array('logout', 'error', 'code', 'order_id', 'spid_page')),
+		  'cancel_redirect_uri' => $client->getCurrentURI(array('cancel'=>1), array('logout', 'error', 'code', 'order_id', 'spid_page')),
+	  )) . '">Campaign Flow</a> (checkout flow with campaign specified</p>';
+  
+  } else { // No session, user must log in
+   
+	  echo '<h3 id="message">Please log in</h3>';
+	  // Show a login link
+	  echo '<p><a id="login-link" href="' . $client->getLoginURI(array(
+		  'redirect_uri' => $client->getCurrentURI(array('place' => 'oslo'), array('logout','error','code', 'default', 'cancel', 'order_id', 'spid_page')),
+		  'cancel_redirect_uri' => $client->getCurrentURI(array('cancel' => 1), array('logout','error','code', 'default', 'cancel', 'order_id', 'spid_page')),
+	  )) . '">Login</a> (standard auth flow)</p>';
+  
+	  echo '<h5>or</h5>';
+	  echo '<p><a id="signup-flow-link" href="' . $client->getSignupURI(array(
+		  'redirect_uri' => $client->getCurrentURI(array(), array('logout','error','code', 'order_id', 'spid_page')),
+		  'cancel_redirect_uri' => "http://google.com"
+	  )) . '">Signup Flow</a> (standard auth flow with signup parameter</p>';
+  
+	  echo '<h5>or</h5>';
+	  echo '<p><a id="checkout-link" href="' . $client->getPurchaseURI(array(
+		  'redirect_uri' => $client->getCurrentURI(array(), array('logout','error','code', 'order_id', 'spid_page')),
+		  'cancel_uri' => $client->getCurrentURI(array('cancel' => 1), array('logout','error','code', 'default', 'cancel', 'order_id', 'spid_page')),
+	  )) . '">Buy</a> (standard checkout flow)</p>';
+  
+  }
+						?>
+						<a href="<?php echo esc_url( home_url( '/' ) ); echo $login_menu_slug; ?>"><i class="far fa-user"></i> <span class="navtext"><?php echo $login_menu_text; ?></span></a></li>
+						<li class="searchtrigger"><span><i class="fa fa-search"></i></span></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	<div class="headersearch">
+	<form method="get" action="<?php echo hytteguiden_search_result_url(); ?>" id="global_search_form">
+			<div class="form-group">
+				<input type="text" id="global_search" name="s" value="<?php if(isset($_REQUEST['s']) && !empty($_REQUEST['s'])){ echo $_REQUEST['s']; } ?>" placeholder="Søk Etter Hytte" class="form-control">
+
+				<a href="<?php echo hytteguiden_search_result_url(); ?>" class="btn btn-theme1 btn-filter">Se Alle Hytter</a>
+				<span class="btn btn-theme1 btn-search"><i class="fa fa-times"></i></span>
+			</div>
+		</form>
+	</div>										
+	</header>
+	<!-- //header -->

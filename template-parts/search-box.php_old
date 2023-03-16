@@ -1,0 +1,23 @@
+<?php
+	$banner_title = get_theme_mod( 'banner_title', 'Finn din drømmehytte');
+	$banner_image = get_theme_mod( 'banner_image', get_template_directory_uri(). '/images/bannerbg.jpg');
+	$search_btn_name = get_theme_mod( 'search_btn_name', 'Finn din drømmehytte');
+?>
+<section class="sectionsearch" style="background-image: url(<?php echo $banner_image; ?>);">
+	<div class="searchbanner">
+		<?php
+					if(isset($banner_title) && !empty($banner_title)){
+					echo '<h3>'.$banner_title . '</h3>';
+				}
+		?>
+		<form method="get" action="<?php echo hytteguiden_search_result_url(); ?>" id="search_cabin">
+			<div class="form-group">
+				<input type="text" name="s" class="form-control" placeholder="<?php echo esc_attr( 'Søk i våre 300 hyttemodeller', 'hytteguiden' ); ?>">
+				<button type="submit" class="btn"><i class="fa fa-search"></i></button>
+			</div>
+			<p class="formlink"><a href="<?php echo hytteguiden_search_result_url(); ?>"><?php echo $search_btn_name; ?> <i class="fa fa-long-arrow-alt-right"></i></a></p>
+		</form>
+	</div>
+</section>
+<!-- //sectionsearch -->
+

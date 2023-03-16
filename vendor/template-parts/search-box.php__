@@ -1,0 +1,101 @@
+<?php
+	$banner_title = get_theme_mod( 'banner_title', 'Finn din drømmehytte');
+	$banner_image = get_theme_mod( 'banner_image', get_template_directory_uri(). '/images/bannerbg.jpg');
+	$search_btn_name = get_theme_mod( 'search_btn_name', 'Finn din drømmehytte');
+?>
+<section class="sectionsearch" style="background-image: url(<?php echo $banner_image; ?>);">
+<div class="bannerfilterwrap">
+		<div class="bannerfilter">
+		<?php
+					if(isset($banner_title) && !empty($banner_title)){
+					echo '<h5>'.$banner_title . '</h5>';
+				}
+		?>
+			<form method="get" action="<?php echo hytteguiden_search_result_url(); ?>">
+				<div class="form-group">
+					<select class="custom-select" name="bedrooms">
+						<option value="" ><?php _e('Antall Soverom', 'hytteguiden'); ?></option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6*">6+</option>
+					</select>
+				</div>
+				<!-- <div class="form-group">
+					
+					<select class="custom-select" name="bathrooms">
+						<option value=""><?php// _e('Antall Bad', 'hytteguiden'); ?></option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</div> -->
+				<!-- <div class="form-group">
+					<select name="cabin_style" class="custom-select">
+						<option value=""><?php //_e('Stil', 'hytteguiden'); ?></option>
+						<?php
+                     // $prod_cat_args = array(
+                               //   'orderby'                => 'name',
+                               //   'order'                  => 'ASC',
+                               //   'hide_empty'             => 0
+                              //  );
+					 // $cabin_terms = get_terms( 'cabin_style', $prod_cat_args );
+					 // if ( ! empty( $cabin_terms ) && ! is_wp_error( $cabin_terms ) ) {
+					//	foreach ( $cabin_terms as $term ) {
+					//		if(array_key_exists('term_id', $term) ) {
+					  ?>
+						<option value="<?php //echo $term->slug; ?>"><?php //echo $term->name; ?></option>
+						<?php
+                         // }
+                       // }
+                      //}
+                    ?>
+					</select>
+				</div> -->
+				<div class="form-group">
+					<div class="rangeslider">
+						<div class="form-group">
+							<label class="fieldlabel"><?php _e('Pris', 'hytteguiden'); ?></label>
+							<div class="rangedisplay">
+                <div class="rangevalue">Min: <span class="banner_min_price"><?php echo  $GLOBALS['slider_defaults']['slider_min_price']; ?></span></div>
+                <div class="rangevalue">Max: <span class="banner_max_price"><?php echo  $GLOBALS['slider_defaults']['slider_max_price']; ?></span></div>
+								<input type="hidden" name="min_price" class="form-control banner_in_min_price" placeholder="0" value="" >
+								<input type="hidden" name="max_price" class="form-control banner_in_max_price" placeholder="10000" value="">
+              </div>
+              <div id="home_banner_price" class="slider"></div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<div class="rangeslider">
+						<div class="form-group">
+							<label class="fieldlabel"><?php _e('Størrelse', 'hytteguiden'); ?></label>
+							<div class="rangedisplay">
+                <div class="rangevalue">Min: <span class="banner_min_size"><?php echo  $GLOBALS['slider_defaults']['slider_min_size']; ?></span></div>
+                <div class="rangevalue">Max: <span class="banner_max_size"><?php echo  $GLOBALS['slider_defaults']['slider_max_size']; ?></span></div>
+								<input type="hidden" name="min_size" class="form-control banner_in_min_size" placeholder="0" value="" >
+								<input type="hidden" name="max_size" class="form-control banner_in_max_size" placeholder="10000" value="">
+              </div>
+              <div id="home_banner_slider" class="slider"></div>
+						</div>
+					</div>
+				</div>
+				<a href="<?php echo hytteguiden_search_result_url(); ?>"><button type="submit" class="btn btn-block btn-theme1">Søk</button></a>
+				
+			</form>
+		</div>
+	</div>
+	<div class="searchbanner">
+
+		<form method="get" action="<?php echo hytteguiden_search_result_url(); ?>" id="search_cabin">
+</form>
+	</div>
+</section>
+
+<!-- //sectionsearch -->
+

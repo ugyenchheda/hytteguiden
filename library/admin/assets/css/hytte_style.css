@@ -1,0 +1,99 @@
+td.featured_image.column-featured_image {
+    width: 90%;
+    float: left;
+    margin: 0 auto;
+    display: inline-table;
+    vertical-align: top;
+    text-align: center;
+    height: 80px;
+    overflow: hidden;
+}
+
+/*Css for Producer cabin listing*/
+td.featured_image.column-featured_image img {
+    width: 80px;
+    height: auto;
+    }
+th#featured_image {
+    width: 150px;
+    text-align: center;
+}
+.text-center {
+  text-align: left;
+}
+.cabin_row_table {
+    border-spacing: 0px;
+}
+.cabin_row_table th.table-head {
+    padding: 10px;
+    background: #f5f4f4;
+    border-bottom: 1px solid #c1bebe;
+    text-align: left;
+}
+.cabin_row_table tr.meta-table td {
+    border-bottom: 1px solid #d6d6d6;
+    padding: 0px 10px;
+}
+.cabin_row_table tr.meta-table a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #515151;
+}
+.cabin_row_table tr.meta-table a:hover {
+    color: #0173aa;
+}
+.option-height {
+    padding: 5px 8px;
+}
+
+.custom_form input[type="text"]{
+    font-size: 0.875rem;
+    height: calc(1.75rem + 2px);
+    padding: 0.25rem 0.5rem;
+}
+.hytte_admin_search {
+    float: right;
+    margin-bottom: 10px;
+}
+.hytte_admin_search input {
+    padding: 7px 7px;
+}
+.hytte_admin_search select {
+    padding: 6px;
+    height: auto;
+    color: #69676b !important;
+}
+.hytte_admin_search #search-submit {
+    padding: 2px 12px !important;
+    height: 31px;
+    margin-top: 2px;
+}
+.hytte_pagination ul {
+    text-align: center;
+    display: inline-block;
+    margin: 10px 20px;
+    float: right;
+}
+.hytte_pagination ul li {
+    width: 20px;
+    float: left;
+    margin: 1px;
+}
+.hytte_pagination ul li a {
+    background: #fff;
+    padding: 5px 6px;
+    color: #5d5959;
+    text-decoration: none;
+    border: 1px solid #e1e1e1;
+}
+.hytte_pagination ul li a:hover {
+    color: #0073aa;
+}
+
+input.hytte_required {
+    background: #fb000061;
+}
+.cmb-th span.hytte_tooltip {
+    color: #f00;
+    font-size: 20px;
+}

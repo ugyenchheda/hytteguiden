@@ -1,0 +1,21 @@
+{
+  "name": "schibsted/sdk-php",
+  "description": "OAuth2 and REST client for connecting and accessing the SPiD API.",
+  "version": "2.4.5",
+  "type": "library",
+  "keywords": ["Oauth2","SPiD","REST","API","PHP"],
+  "homepage": "https://github.com/schibsted/sdk-php",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Schibsted Payment",
+      "homepage": "https://github.com/schibsted/sdk-php"
+    }
+  ],
+  "autoload": {
+    "classmap": ["src/Client.php", "src/Client/Exception.php"]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.3.*"
+  }
+}

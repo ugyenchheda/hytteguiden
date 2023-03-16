@@ -1,0 +1,44 @@
+
+2012-11-07 v2.1
+
+    - Fixed a bug where 'refresh_token' was not set in the signed session array. Basically fixing refresh logic.
+
+2012-11-15 v2.2
+
+    - Fixed a bug with refreshToken setting the session array and made getServerURL a public method
+
+2013-05-01 v2.3
+
+    Bug fixes:
+
+    - Fixed critical bugs that made parse and creating signature hashes non-functional
+    - Fixed typo in setContextClientID()
+
+    Other:
+
+    - Added MIT license file
+    - Added unit test support (tests will be added over the next few partial releases)
+    - Added composer.json for dependency deployment
+    - Added travis.yml for CI
+    - Fixed some typoes and made some improvements to the example files
+
+2014-06-10 v2.3.1
+
+    - Added tests
+    - Added Direct Payment example
+    - Fixed bug on signed requests validation
+    - Fix bug in exception message when not string
+    - Adjusted the composer specification
+
+2014-09-17 v2.4
+
+    - Generated urls now go to the new flows in SPiD
+    - Tweaks to client login (SSO) example
+
+
+2014-10-05 v2.4.2
+
+    - Disabled DNS cache for curl
+    - Changed VERIFYPEER and VERIFYHOST for curl
+    - Changed user agent to include VERSION constant
+    - Indentation and white space fixes, spelling mistakes and PHPDoc fixes
